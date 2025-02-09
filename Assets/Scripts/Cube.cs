@@ -1,35 +1,39 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Cube : MonoBehaviour
 {
-    [SerializeField] private GameObject _cube;
+    private Renderer _renderer;
+    private Rigidbody _rigidbody;
 
-    private Camera _mainCamera;
-    private float _scaleValue;
-
-    public event Action<GameObject, float> CubeSelected;
+    public event Action<Cube> Destroyed;
 
     private void Awake()
     {
-        _mainCamera = Camera.main;
+        _renderer = GetComponent<Renderer>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
-    private void Update()
+    public void Interact()
     {
-        int leftMouseButton = 0;
+        Destroyed?.Invoke(this);
+        Destroy(gameObject);
+    }
 
-        if (Input.GetMouseButtonDown(leftMouseButton))
+    public void ChangeColor()
+    {
+        _renderer.material.color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
+    }
+
+    public void Explode(List<Cube> cubes)
+    {
+        float explosionForce = 500;
+        float explosionRadius = 10;
+
+        foreach (Cube cube in cubes)
         {
-            if (Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit))
-            {
-                _cube = hit.transform.gameObject;
-                _scaleValue = hit.transform.localScale.x;
-
-                CubeSelected?.Invoke(_cube, _scaleValue);
-
-                Destroy(_cube);
-            }
+            cube._rigidbody.AddExplosionForce(explosionForce, transform.position, explosionRadius);
         }
     }
 }
