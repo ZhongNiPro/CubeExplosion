@@ -20,7 +20,6 @@ public class Raycaster : MonoBehaviour
                 if (hit.collider.gameObject.TryGetComponent(out Cube cube))
                 {
                     cube.Interact();
-                    Debug.Log("cube");
                 }
             }
         }

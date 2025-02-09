@@ -16,10 +16,9 @@ public class Spawner : MonoBehaviour
         _cube.Destroyed -= OnCubeDestroyed;
     }
 
-    private void OnCubeDestroyed(Cube cube)
+    private void OnCubeDestroyed(Cube destroyed—ube)
     {
-        Debug.Log("!");
-        cube.Destroyed -= OnCubeDestroyed;
+        destroyed—ube.Destroyed -= OnCubeDestroyed;
 
         int minCount = 2;
         int maxCount = 6;
@@ -28,7 +27,7 @@ public class Spawner : MonoBehaviour
 
         int randomCount = Random.Range(minCount, maxCount + 1);
         List<Cube> splitedCubes = new List<Cube>();
-        float scaleValue = cube.transform.localScale.x;
+        float scaleValue = destroyed—ube.transform.localScale.x;
 
         if (scaleValue >= Random.value)
         {
@@ -36,26 +35,24 @@ public class Spawner : MonoBehaviour
 
             for (int i = 0; i < randomCount; i++)
             {
-                float randomX = Random.value + cube.transform.position.x - correctionRate;
-                float randomY = Random.value + cube.transform.position.y;
-                float randomZ = Random.value + cube.transform.position.z - correctionRate;
+                float randomX = Random.value + destroyed—ube.transform.position.x - correctionRate;
+                float randomY = Random.value + destroyed—ube.transform.position.y;
+                float randomZ = Random.value + destroyed—ube.transform.position.z - correctionRate;
 
                 Vector3 position = new Vector3(randomX, randomY, randomZ);
 
-                Cube newCube = Instantiate(_cubePrefab, position, Quaternion.identity);
+                Cube cube = Instantiate(_cubePrefab, position, Quaternion.identity);
 
-                newCube.Destroyed += OnCubeDestroyed;
+                cube.Destroyed += OnCubeDestroyed;
 
-                newCube.transform.localScale = new Vector3(scaleValue, scaleValue, scaleValue);
+                cube.transform.localScale = new Vector3(scaleValue, scaleValue, scaleValue);
 
-                newCube.ChangeColor();
+                cube.ChangeColor();
 
-                splitedCubes.Add(newCube);
+                splitedCubes.Add(cube);
             }
         }
 
-        cube.Explode(splitedCubes);
-        cube.Destroyed -= OnCubeDestroyed;
-
+        destroyed—ube.Explode(splitedCubes);
     }
 }
