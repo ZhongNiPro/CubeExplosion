@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Cube : MonoBehaviour
@@ -26,14 +25,27 @@ public class Cube : MonoBehaviour
         _renderer.material.color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
     }
 
-    public void Explode(List<Cube> cubes)
+    public void Explode()
     {
-        float explosionForce = 500;
-        float explosionRadius = 10;
+        float explosionForce = 2;
+        float overlapRadius = 3;
+        float overlapRate = this._rigidbody.transform.localScale.x;
 
-        foreach (Cube cube in cubes)
+        Vector3 position = this._rigidbody.position;
+        Collider[] colliders = Physics.OverlapSphere(position, overlapRadius / overlapRate);
+
+        foreach (Collider collider in colliders)
         {
-            cube._rigidbody.AddExplosionForce(explosionForce, transform.position, explosionRadius);
+            Rigidbody rigidbody = collider.attachedRigidbody;
+
+            if (rigidbody != null && rigidbody != this._rigidbody)
+            {
+                Vector3 direction = (rigidbody.position - position).normalized;
+                float distance = (rigidbody.position - position).sqrMagnitude;
+                Vector3 force = explosionForce / overlapRate * rigidbody.mass * direction / distance;
+
+                rigidbody.AddForceAtPosition(force, position, ForceMode.Impulse);
+            }
         }
     }
 }
